@@ -40,7 +40,7 @@ const HomeScreen = () => {
         }}
       >
         <View>
-          <RenderUserInfo label={"Name: "} value={user.password} />
+          <RenderUserInfo label={"Name: "} value={user.name} />
           <RenderUserInfo label={"Email: "} value={user.email} />
         </View>
       </View>

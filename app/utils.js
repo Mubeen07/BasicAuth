@@ -13,7 +13,12 @@ const validateEmail = (value) => {
 // No whitespace
 const validatePassword = (password) => {
   const regex = /^[a-zA-Z0-9]+$/;
-  return regex.test(password);
+  return regex.test(password) && password.length >= 6;
 };
 
-export { validateEmail, validatePassword };
+const validateName = (name) => {
+  const regex = /^[A-Za-z]+$/;
+  return name.trim() !== "" && regex.test(name);
+};
+
+export { validateName, validateEmail, validatePassword };

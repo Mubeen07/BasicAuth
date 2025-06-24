@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { validateEmail, validatePassword } from "../utils";
+import { validateEmail, validateName, validatePassword } from "../utils";
 
 const AuthContext = createContext();
 
@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const loadUser = async () => {
+      const stored = await AsyncStorage.getItem(USER_LIST);
       const loggedInUser = await AsyncStorage.getItem(LOGGEDIN_USER);
       if (loggedInUser) {
         setUser(JSON.parse(loggedInUser));
@@ -23,13 +24,16 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const register = async ({ name, email, password }) => {
+    if (!validateName(name)) throw new Error("Please enter name!");
     if (!validateEmail(email)) throw new Error("Please enter a valid email!");
     if (!validatePassword(password))
-      throw new Error("Password should follow alpha numeric only!");
+      throw new Error(
+        "Password should contain alpha numeric and must have 6 characters.!"
+      );
 
     const userData = { name, email, password };
     let storedUserList = await AsyncStorage.getItem(USER_LIST);
-    setUser(JSON.parse(storedUserList));
+    storedUserList = JSON.parse(storedUserList);
     if (storedUserList) storedUserList.push(userData);
     else storedUserList = [userData];
     await AsyncStorage.setItem(USER_LIST, JSON.stringify(storedUserList));
@@ -49,7 +53,7 @@ export const AuthProvider = ({ children }) => {
       setUser(userInfo);
       await AsyncStorage.setItem(LOGGEDIN_USER, JSON.stringify(userInfo));
     } else {
-      throw new Error("Invalid credentials");
+      throw new Error("Incorrect credentials");
     }
   };
 
